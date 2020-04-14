@@ -55,13 +55,13 @@ int     main()
 
     return 0;
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 int*     create_array(int array_size)
 {
     int *array = new int [array_size];   //memory allocation
     return array;
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void    array_filled_with_random_values(int *array, int array_size, int pos)
 {
     srand(time(NULL));
@@ -75,47 +75,48 @@ void    array_filled_with_random_values(int *array, int array_size, int pos)
         for(int i = (array_size - 1 - pos); i < (array_size + pos); i++)
             array[i] = min + rand() % max;
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void    print_array(int *array, int array_size)
 {
     for(int i = 0; i < array_size; i++)
         cout << "array[" << i << "]" << " = " << array[i] << endl;
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void    push_item_back(int *array, int *array_size, int new_element)
 {
     array = new int [*array_size + new_element]; 
     *array_size = *array_size + new_element;    
 }
-//????????????????????????????????????????????????????????????????????????????????????????????????
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void    add_item_to_specific_location(int **array, int &array_size, int new_value, int pos_hum)
 {
-    *array = new int [array_size + 1];
-    array_size = array_size + 1;
-
+    array_size += 1;
+    int *newarray = new int [array_size];
+    
+    for(int i = 0; i < array_size; i++)
+        *(newarray + i) = *(*array + i);
+    
     for(int i = array_size - 1; i >= pos_hum; i--)
     {
-        cout << "6ilo -> array["<< i << "]" << array[i] << endl;
-        if(i > pos_hum) 
-            array[i] = array[i - 1];
-        else 
-        {
-            array[i] = array[i - 1];
-            array[i - 1] = new_value;       //???????????/
-            cout << "Stalo -> array["<< i << "- 1] = &new_value: " << array[i - 1] << endl;
-        }
-        cout << "Stalo -> array["<< i << "]" << array[i] << endl;
+        if(i > pos_hum)
+            *(newarray + i) = *(*array + (i - 1));
+        else if(i > 0 && i == pos_hum)
+            *(newarray + i) = new_value;       
+        else
+            *(newarray + i) = new_value;
     }
-    //cout << "**array: " << **array << endl;     //показывает содержимое 0 элемента по адресу
-
+    
+    delete[] *array;
+    *array = newarray;
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 int     del_item_back(int *array, int *array_size, int new_element)
 {
     array = new int [*array_size - new_element]; 
     *array_size = *array_size - new_element;
+    return 0;
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void    delete_array(int *array)
 {
     delete [] array;
