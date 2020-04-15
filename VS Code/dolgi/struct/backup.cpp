@@ -12,12 +12,12 @@ using namespace std;
 int*    create_array(int array_size);       //create array and allocate memory for it
 void    array_filled_with_random_values(int *array, int array_size, int pos);       //fill the array with random values
 void    print_array(int *array, int array_size);        //print array
-void    push_item_back(int *array, int *array_size, int new_element);       //add item back
+void    push_item_back(int **array, int &array_size, int new_element);       //add item back
 void    add_item_to_specific_location(int **array, int &array_size, int new_value, int pos_hum);        //add item to specific location
 void    remove_item_to_specific_location(int **array, int &array_size, int pos_hum);        //remove item to specific location
 void    sort_array(int *array, int array_size);     //array sorting
 int     search_item(const int *array, int array_size, int new_element);        //search for an element in an array by its value
-int     del_item_back(int *array, int *array_size, int new_element);        //delele last add item
+int     del_item_back(int **array, int &array_size, int new_element);        //delele last add item
 
 void    delete_array(int *array);
 
@@ -36,13 +36,13 @@ int     main()
     //add new elements
     cout << "How many elements to add: ";
     cin >> new_element;
-    push_item_back(array, &array_size, new_element);     
+    push_item_back(&array, array_size, new_element);     
     array_filled_with_random_values(array, array_size, new_element);    
     print_array(array, array_size);
 
     //del last add item
     cout << "Del last add item: " << endl;
-    del_item_back(array, &array_size, new_element);
+    del_item_back(&array, array_size, new_element);
     print_array(array, array_size);
 
     //add item to specific location
@@ -68,7 +68,7 @@ int     main()
     print_array(array, array_size);
 
     //search for an element in an array by its value
-    cout << "Enter a value to find an array element: \n" << endl;
+    cout << "Enter a value to find an array element: " << endl;
     cin >> new_element;
     if(search_item(array, array_size, new_element) == 0) 
         cout << "The value you entered: " << new_element << ", is not in the array" << endl;
@@ -107,10 +107,10 @@ void    print_array(int *array, int array_size)
         cout << "array[" << i << "]" << " = " << array[i] << endl;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-void    push_item_back(int *array, int *array_size, int new_element)
+void    push_item_back(int **array, int &array_size, int new_element)
 {
-    array = new int [*array_size + new_element]; 
-    *array_size = *array_size + new_element;    
+    *array = new int [array_size + new_element];    //??
+    array_size = array_size + new_element;    
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void    add_item_to_specific_location(int **array, int &array_size, int new_value, int pos_hum)
@@ -200,10 +200,10 @@ int     search_item(const int *array, int array_size, int new_element)
     return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-int     del_item_back(int *array, int *array_size, int new_element)
+int     del_item_back(int **array, int &array_size, int new_element)
 {
-    array = new int [*array_size - new_element]; 
-    *array_size = *array_size - new_element;
+    *array = new int [array_size - new_element]; 
+    array_size = array_size - new_element;
     return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
