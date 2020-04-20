@@ -8,7 +8,7 @@
 
 using namespace std;
 
-int     random_name(int random);
-int     random_author(int random);
-int     random_publishing_house(int random);
-int     random_genre(int random);
+char     random_book_name(int random);
+char     random_author(int random, int random_gender);
+char     random_publishing_house(int random);
+char     random_genre(int random);
