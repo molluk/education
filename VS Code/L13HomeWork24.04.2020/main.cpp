@@ -54,9 +54,11 @@ int     main()
         cout << "Genre: " << book_list[i].genre << ";" << endl;
     }
     
-    //cout_book(book_list, num);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    char search_name_author[10];
 
-    //delete [] book_list;
+    cout << "Search book for name author: ";
+        cin >> search_name_author;
 
     return 0;
 }

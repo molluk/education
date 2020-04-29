@@ -27,5 +27,3 @@ extern string author_woman_last_name[];
 extern string publishing_house[];
 extern string genre[];
 */
-
-void    cout_book(int book_list, int num);
