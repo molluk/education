@@ -10,10 +10,11 @@
 struct  ship
 {
     int four_d = 4;
-    int three_d = 3;
-    int two_d = 2;
-    int single_d = 1;
-    int all = 20;
+    int three_d = 6;
+    int two_d = 6;
+    int single_d = 4;
+    int all_sell = 20;
+    int all_ships = 10;
     char four_deck = '4';
     char three_deck = '3';
     char two_deck = '2';
@@ -22,13 +23,13 @@ struct  ship
 
 struct player
 {
-    int player_field[9][9];
+    int player_field[10][9];
 };
 
 using namespace std;
 
 void    create_table();
-void    reading_table();
+int    reading_table(int matrix_x, int matrix_y);
 
 int     main()
 {
@@ -36,7 +37,7 @@ int     main()
     create_table();
     cout << "Press ENTER when fill the table in the file: \"field_war.txt\"" << endl;
     getchar();
-    reading_table();
+    reading_table(0, 0);
 
     return 0;
 }
@@ -63,40 +64,41 @@ void    create_table()
     field_war.close();
 }
 
-void    reading_table()
+int    reading_table(int matrix_x, int matrix_y)
 {
-    player field;
+    int x = 0, y = 0;
+    player player1;
     ship ships;
     char buff;
     ifstream tab("field_war.txt");
 
-    for(int x = 0; x < 50; x++)
+    while(buff != '*')
     {
-        for(int y = 0; y < 50; y++)
+        tab >> buff;
+        if(buff >= '0' && buff <= '4' && buff != '\0')
         {
-            tab >> buff;
-            if(buff > '0' && buff < '5') 
+            player1.player_field[x][y] = buff - '0';  //int?
+            y++;
+            if(buff >= '1' && buff <= '4') ships.all_sell--;
+            if(ships.all_sell < 0) 
             {
-                field.player_field[x][y] = buff;
-                ships.all--;
-                if(ships.all < 0) 
-                {
-                    cout << "ERROR, you indicated the wrong number of ships" << endl;
-                    buff = '*';
-                }
+                cout << "ERROR, you indicated the wrong number of ships" << endl;
+                return 0;
             }
-            else if(buff == 0) field.player_field[x][y] = buff;
-            if(buff == '*') break;
         }
-        if(buff == '*') break;
+        if(y == 10)
+        {
+            y = 0;
+            x++;
+        }
     }
-    //ВЫВОД ТАБЛИЦЫ И ЕЕ ЗАПОЛНЕНИЕ В МАССИВ НЕКОРРЕКТНЫ
     //print table
     for(int x = 0; x < 10; x++)
-    { 
-        for(int y = 0; y < 10; y++)
-            cout << field.player_field[x][y];
-        cout << endl;
+    {
+        for(int y = 0; y < 9; y++)
+            cout << "|" << player1.player_field[x][y];
+        if(x <= 9) cout << "|" << endl;
     }
-
+    
+    return 0;
 }
