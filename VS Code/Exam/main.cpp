@@ -106,18 +106,18 @@ int    reading_table(Player *player1)
 int     check_table(Player *player1, Player *player2)
 {
     int num;
-    int x1, x2, x3, x4;
-    int y1, y2, y3, y4;
 
     for(int x = 0; x < 10; x++)
     {
         for(int y = 0; y < 9; y++)
         {
             int horizontal = 0, vertical = 0; 
+            int x1, x2, x3, x4;
+            int y1, y2, y3, y4;
             if(player1->player_field[x][y] >= 1 && player1->player_field[x][y] <= 4)
             {
                 num = player1->player_field[x][y];
-                //single_deck   +
+                //single_deck   ??
                 if(num == 1) 
                 {   
                     //check for the nearest ships
@@ -129,8 +129,8 @@ int     check_table(Player *player1, Player *player2)
                             error_message;
                         }
                 }
-                //two_deck +
-                else if(num == 2) 
+                //two_deck ??
+                else if(num == 1) 
                 {
                     if(2 == (player1->player_field[x][y-1] || player1->player_field[x][y+1] || player1->player_field[x-1][y] || player1->player_field[x+1][y]))
                     {
@@ -140,7 +140,7 @@ int     check_table(Player *player1, Player *player2)
                         else if(player1->player_field[x-1][y] == 2){x1 = x-1; y1 = y; vertical++;}    //vertical
                     }
                     else if((player1->player_field[x][y-1] || player1->player_field[x][y+1] || 
-                        player1->player_field[x-1][y] || player1->player_field[x++][y]) != 2)
+                        player1->player_field[x-1][y] || player1->player_field[x+1][y]) != 2)
                         {
                             cout << "four deck" << endl;
                             error_message; 
@@ -157,30 +157,56 @@ int     check_table(Player *player1, Player *player2)
                                 error_message;
                             }
                     }
-                }
-                //three_deck
-                else if(num == 2) 
-                {
-                    if(2 == (player1->player_field[x][y-1] || player1->player_field[x][y+1] || player1->player_field[x-1][y] || player1->player_field[x+1][y]))
+                    else if(vertical == 1)
                     {
-                        if(player1->player_field[x][y-1] == 2){x1 = x; y1 = y-1; horizontal++;}         //horizontal
-                        else if(player1->player_field[x][y+1] == 2){x1 = x; y1 = y+1; horizontal++;}    //horizontal
-                        else if(player1->player_field[x+1][y] == 2){x1 = x+1; y1 = y; vertical++;}    //vertical
-                        else if(player1->player_field[x-1][y] == 2){x1 = x-1; y1 = y; vertical++;}    //vertical
+                        if(0 < (player1->player_field[x-1][y] && player1->player_field[x-1][y-1] && player1->player_field[x-1][y+1] && player1->player_field[x][y-1] && player1->player_field[x][y+1]   //test1
+                            && player1->player_field[x1][y1-1] && player1->player_field[x1][y1+1] && player1->player_field[x1+1][y1] && player1->player_field[x1][y1-1] && player1->player_field[x1][y1+1] ||   
+                            player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1-1] && player1->player_field[x1-1][y1+1] && player1->player_field[x1][y1-1] && player1->player_field[x1][y1+1]       //test2
+                            && player1->player_field[x][y-1] && player1->player_field[x][y1+1] && player1->player_field[x+1][y] && player1->player_field[x][y-1] && player1->player_field[x][y+1]))
+                            {
+                                cout << "four deck" << endl;
+                                error_message;
+                            }
                     }
-                    else if((player1->player_field[x][y-1] || player1->player_field[x][y+1] || 
-                        player1->player_field[x-1][y] || player1->player_field[x++][y]) != 2)
+                }
+                //three_deck???
+                else if(num == 3) 
+                {
+                    if(3 == (player1->player_field[x][y-1] && player1->player_field[x][y-2] ||player1->player_field[x][y+1] && player1->player_field[x][y+2] || 
+                        player1->player_field[x-1][y] && player1->player_field[x-2][y] || player1->player_field[x+1][y] && player1->player_field[x+2][y]))
+                    {
+                        if((player1->player_field[x][y-1] && player1->player_field[x][y-2]) == 3){x1 = x; y1 = y-1; y2 = y-2; horizontal++;}         //horizontal
+                        else if((player1->player_field[x][y+1] && player1->player_field[x][y+2]) == 3){x1 = x; y1 = y+1; y1 = y+2; horizontal++;}    //horizontal
+                        else if((player1->player_field[x+1][y] && player1->player_field[x+2][y]) == 3){x1 = x+1; x2 = x+2; y1 = y; vertical++;}    //vertical
+                        else if((player1->player_field[x-1][y] && player1->player_field[x-2][y]) == 3){x1 = x-1; x2 = x-2; y1 = y; vertical++;}    //vertical
+                    }
+                    else if((player1->player_field[x][y-1] && player1->player_field[x][y-2] || player1->player_field[x][y+1] && player1->player_field[x][y+2] || 
+                    player1->player_field[x-1][y] && player1->player_field[x-2][y] || player1->player_field[x+1][y] && player1->player_field[x+2][y]) != 3)
                         {
                             cout << "four deck" << endl;
                             error_message; 
                         }
-                    //check for the nearest ships
+                    //check for the nearest ships??
                     if(horizontal == 1)
                     {
-                        if(0 < (player1->player_field[x][y-1] && player1->player_field[x-1][y] && player1->player_field[x-1][y-1] && player1->player_field[x+1][y] && player1->player_field[x+1][y+1]   //test1
-                            && player1->player_field[x1][y1-1] && player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1-1] && player1->player_field[x1+1][y1] && player1->player_field[x1+1][y1+1] ||   
-                            player1->player_field[x1][y1-1] && player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1-1] && player1->player_field[x1+1][y1] && player1->player_field[x1+1][y1+1]       //test2
-                            && player1->player_field[x][y-1] && player1->player_field[x-1][y1] && player1->player_field[x-1][y-1] && player1->player_field[x+1][y] && player1->player_field[x+1][y+1]))
+                        if(0 < (player1->player_field[x-1][y] && player1->player_field[x-1][y+1] && player1->player_field[x-1][y-1] && player1->player_field[x+1][y] 
+                            && player1->player_field[x1-1][y] && player1->player_field[x1+1][y] && player1->player_field[x2+1][y] && player1->player_field[x2+1][y+1] && player1->player_field[x2+1][y-1] 
+                            && player1->player_field[x2-1][y] && player1->player_field[x2+1][y]))
+                            {
+                                cout << "four deck" << endl;
+                                error_message;
+                            }
+                    }
+                    else if(vertical == 1)
+                    {
+                        if(0 < (player1->player_field[x][y-1] && player1->player_field[x][y-2] && player1->player_field[x-1][y] && player1->player_field[x-2][y] && player1->player_field[x-1][y-1] && player1->player_field[x-2][y-2] //test1
+                            && player1->player_field[x+1][y] && player1->player_field[x+2][y] && player1->player_field[x+1][y+1] &&  player1->player_field[x+2][y+2]   
+                            && player1->player_field[x1][y1-1] && player1->player_field[x1][y1-2] && player1->player_field[x1-1][y1] && player1->player_field[x1-2][y1]  && player1->player_field[x1-1][y1-1] && player1->player_field[x1-2][y1-2] 
+                            && player1->player_field[x1+1][y1] && player1->player_field[x1+2][y1] && player1->player_field[x1+1][y1+1] && player1->player_field[x1+2][y1+2] ||   
+                            player1->player_field[x1][y1-1] && player1->player_field[x1][y1-2] && player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1-1] && player1->player_field[x1-2][y1-2] //test2
+                            && player1->player_field[x1+1][y1] && player1->player_field[x1+2][y1] && player1->player_field[x1+1][y1+1] && player1->player_field[x1+2][y1+2]        
+                            && player1->player_field[x][y-1] && player1->player_field[x1][y1-2] && player1->player_field[x-1][y1] && player1->player_field[x1-2][y1] && player1->player_field[x-1][y-1] && player1->player_field[x1-2][y1-2] 
+                            && player1->player_field[x+1][y] && player1->player_field[x1+2][y1] && player1->player_field[x+1][y+1] && player1->player_field[x1+2][y1+2] ))
                             {
                                 cout << "four deck" << endl;
                                 error_message;
@@ -188,34 +214,7 @@ int     check_table(Player *player1, Player *player2)
                     }
                 }
                 //four_deck
-                else if(num == 2) 
-                {
-                    if(2 == (player1->player_field[x][y-1] || player1->player_field[x][y+1] || player1->player_field[x-1][y] || player1->player_field[x+1][y]))
-                    {
-                        if(player1->player_field[x][y-1] == 2){x1 = x; y1 = y-1; horizontal++;}         //horizontal
-                        else if(player1->player_field[x][y+1] == 2){x1 = x; y1 = y+1; horizontal++;}    //horizontal
-                        else if(player1->player_field[x+1][y] == 2){x1 = x+1; y1 = y; vertical++;}    //vertical
-                        else if(player1->player_field[x-1][y] == 2){x1 = x-1; y1 = y; vertical++;}    //vertical
-                    }
-                    else if((player1->player_field[x][y-1] || player1->player_field[x][y+1] || 
-                        player1->player_field[x-1][y] || player1->player_field[x++][y]) != 2)
-                        {
-                            cout << "four deck" << endl;
-                            error_message; 
-                        }
-                    //check for the nearest ships
-                    if(horizontal == 1)
-                    {
-                        if(0 < (player1->player_field[x][y-1] && player1->player_field[x-1][y] && player1->player_field[x-1][y-1] && player1->player_field[x+1][y] && player1->player_field[x+1][y+1]   //test1
-                            && player1->player_field[x1][y1-1] && player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1-1] && player1->player_field[x1+1][y1] && player1->player_field[x1+1][y1+1] ||   
-                            player1->player_field[x1][y1-1] && player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1-1] && player1->player_field[x1+1][y1] && player1->player_field[x1+1][y1+1]       //test2
-                            && player1->player_field[x][y-1] && player1->player_field[x-1][y1] && player1->player_field[x-1][y-1] && player1->player_field[x+1][y] && player1->player_field[x+1][y+1]))
-                            {
-                                cout << "four deck" << endl;
-                                error_message;
-                            }
-                    }
-                }
+                
             }
         }
     }
