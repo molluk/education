@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 
-struct  ship
+struct  Ship
 {
     int four_d = 4;
     int three_d = 6;
@@ -21,7 +21,7 @@ struct  ship
     char single_deck = '1';
 };
 
-struct player
+struct Player
 {
     int player_field[10][9];
 };
@@ -29,21 +29,26 @@ struct player
 using namespace std;
 
 void    create_table();
-int    reading_table(int matrix_x, int matrix_y);
+int     reading_table(Player *player1);
+int     check_table(Player *player1, Player *player2);
+void    print_table(Player *player1, Player *player2);
 
 int     main()
 {
-
+    Player player1;
+    Player player2;
     create_table();
     cout << "Press ENTER when fill the table in the file: \"field_war.txt\"" << endl;
     getchar();
-    reading_table(0, 0);
+    if(reading_table(&player1) == 0) return 0;
+    if(check_table(&player1, &player2) == 0) return 0;
+    print_table(&player1, &player2);
 
     return 0;
 }
 
 void    create_table()
-{    //create table
+{
     ofstream field_war("field_war.txt");
     for(int i = 1; i <= 10; i++)
     { 
@@ -64,21 +69,22 @@ void    create_table()
     field_war.close();
 }
 
-int    reading_table(int matrix_x, int matrix_y)
+int    reading_table(Player *player1)
 {
-    int x = 0, y = 0;
-    player player1;
-    ship ships;
+    int x = 0, y = 0, num = 0;
+    Ship ships;
     char buff;
     ifstream tab("field_war.txt");
 
-    while(buff != '*')
+    //reading table
+    while(buff != '*' || num <= 99)
     {
         tab >> buff;
         if(buff >= '0' && buff <= '4' && buff != '\0')
         {
-            player1.player_field[x][y] = buff - '0';  //int?
+            player1->player_field[x][y] = buff - '0';  //int?
             y++;
+            num++;
             if(buff >= '1' && buff <= '4') ships.all_sell--;
             if(ships.all_sell < 0) 
             {
@@ -92,13 +98,55 @@ int    reading_table(int matrix_x, int matrix_y)
             x++;
         }
     }
-    //print table
+    return 1;
+}
+
+int     check_table(Player *player1, Player *player2)
+{
+    int num;
+
     for(int x = 0; x < 10; x++)
     {
         for(int y = 0; y < 9; y++)
-            cout << "|" << player1.player_field[x][y];
+        {
+            if(player1->player_field[x][y] >= 1 && player1->player_field[x][y] <= 4)
+            {
+                num = player1->player_field[x][y];
+                if(num == 1)
+                {
+                    if(0 < (player1->player_field[x][y--] || player1->player_field[x][y++] //1string
+                        || player1->player_field[x--][y] || player1->player_field[x][y--] || player1->player_field[x][y++] //2string
+                        || player1->player_field[x++][y] || player1->player_field[x][y--] || player1->player_field[x][y++])) //3trsing
+                        {
+                            cout << "Error cheking table in:" << player1->player_field[x][y] << "(X:Y) = (" << x << y << ")" << endl;
+                            return 0;
+                        }
+                }
+                else if(num == 2)
+                {
+                    if()
+                    {
+
+                    }
+                    else if((player1->player_field[x][y--] || player1->player_field[x][y++ || 
+                        player1->player_field[x--][y]] || player1->player_field[x++][y]) != 2)
+                        {
+                            cout << "Error cheking table in:" << player1->player_field[x][y] << "(X:Y) = (" << x << y << ")" << endl;
+                            return 0;
+                        }
+                    
+                }
+            }
+        }
+    }
+    return 1;
+}
+void    print_table(Player *player1, Player *player2)
+{
+    for(int x = 0; x < 10; x++)
+    {
+        for(int y = 0; y < 9; y++)
+            cout << "|" << player1->player_field[x][y];
         if(x <= 9) cout << "|" << endl;
     }
-    
-    return 0;
-}
+}    
