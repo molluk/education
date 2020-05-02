@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 
-#define error_message cout << "Error cheking table in: " << "(X:Y) = (" << char(x+'a') << ":" << char(y+'a') << ")" << endl; return 0;
+#define error_message cout <<" error in coordinat: \n"<<char(x+'a')<<":"<<char(y+'a')<<":"<<char(y1+'a')<<"\n"<<char(x1+'a')<<":"<<char(y+'a')<<":"<<char(y1+'a')<< endl; return 0;
 
 struct  Ship
 {
@@ -31,9 +31,9 @@ struct Player
 using namespace std;
 
 void    create_table();
-int     reading_table(Player *player1);
-int     check_table(Player *player1, Player *player2);
-void    print_table(Player *player1, Player *player2);
+int     reading_table(Player *player);
+int     check_table(Player *player);
+void    print_table(Player *player);
 
 int     main()
 {
@@ -43,8 +43,8 @@ int     main()
     cout << "Press ENTER when fill the table in the file: \"field_war.txt\"" << endl;
     getchar();
     if(reading_table(&player1) == 0) return 0;
-    if(check_table(&player1, &player2) == 0) return 0;
-    print_table(&player1, &player2);
+    if(check_table(&player1) == 0) return 0;
+    print_table(&player1);
 
     return 0;
 }
@@ -71,7 +71,7 @@ void    create_table()
     field_war.close();
 }
 
-int    reading_table(Player *player1)
+int    reading_table(Player *player)
 {
     int x = 0, y = 0, num = 1;
     Ship ships;
@@ -84,7 +84,7 @@ int    reading_table(Player *player1)
         tab >> buff;
         if(buff >= '0' && buff <= '4' && buff != '\0')
         {
-            player1->player_field[x][y] = buff - '0';  
+            player->player_field[x][y] = buff - '0';  
             y++;
             num++;
             if(buff >= '1' && buff <= '4') ships.all_sell--;
@@ -103,130 +103,49 @@ int    reading_table(Player *player1)
     return 1;
 }
 
-int     check_table(Player *player1, Player *player2)
+int     check_table(Player *player)
 {
-    int num;
+    int num10, num11, num20, num21;
+    int x = 0, x1 = 1;  //line      x:|y|y1|    
+    int y = 0, y1 = 1;  //column   x1:|y|y1|
 
-    for(int x = 0; x < 10; x++)
+    while(x1 < 10)
     {
-        for(int y = 0; y < 9; y++)
-        {
-            int horizontal = 0, vertical = 0; 
-            int x1, x2, x3, x4;
-            int y1, y2, y3, y4;
-            if(player1->player_field[x][y] >= 1 && player1->player_field[x][y] <= 4)
-            {
-                num = player1->player_field[x][y];
-                //single_deck   ??
-                if(num == 1) 
-                {   
-                    //check for the nearest ships
-                    if(0 < (player1->player_field[x][y-1] || player1->player_field[x][y+1] //1string
-                        || player1->player_field[x-1][y] || player1->player_field[x][y-1] || player1->player_field[x][y+1] //2string
-                        || player1->player_field[x+1][y] || player1->player_field[x][y-1] || player1->player_field[x][y+1])) //3trsing
-                        {
-                            cout << "single deck" << endl;
-                            error_message;
-                        }
-                }
-                //two_deck ??
-                else if(num == 1) 
+        num10 = player->player_field[x][y];
+        num11 = player->player_field[x][y1];
+        num20 = player->player_field[x1][y];
+        num21 = player->player_field[x1][y1];
+
+        if(num21 == 3) 
+            cout << "" << endl;
+        //check obliquely
+        if((num10 != 0 && num21 != 0) || ( num20 != 0 && num11 != 0))
                 {
-                    if(2 == (player1->player_field[x][y-1] || player1->player_field[x][y+1] || player1->player_field[x-1][y] || player1->player_field[x+1][y]))
-                    {
-                        if(player1->player_field[x][y-1] == 2){x1 = x; y1 = y-1; horizontal++;}         //horizontal
-                        else if(player1->player_field[x][y+1] == 2){x1 = x; y1 = y+1; horizontal++;}    //horizontal
-                        else if(player1->player_field[x+1][y] == 2){x1 = x+1; y1 = y; vertical++;}    //vertical
-                        else if(player1->player_field[x-1][y] == 2){x1 = x-1; y1 = y; vertical++;}    //vertical
-                    }
-                    else if((player1->player_field[x][y-1] || player1->player_field[x][y+1] || 
-                        player1->player_field[x-1][y] || player1->player_field[x+1][y]) != 2)
-                        {
-                            cout << "four deck" << endl;
-                            error_message; 
-                        }
-                    //check for the nearest ships
-                    if(horizontal == 1)
-                    {
-                        if(0 < (player1->player_field[x][y-1] && player1->player_field[x-1][y] && player1->player_field[x-1][y-1] && player1->player_field[x+1][y] && player1->player_field[x+1][y+1]   //test1
-                            && player1->player_field[x1][y1-1] && player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1-1] && player1->player_field[x1+1][y1] && player1->player_field[x1+1][y1+1] ||   
-                            player1->player_field[x1][y1-1] && player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1-1] && player1->player_field[x1+1][y1] && player1->player_field[x1+1][y1+1]       //test2
-                            && player1->player_field[x][y-1] && player1->player_field[x-1][y1] && player1->player_field[x-1][y-1] && player1->player_field[x+1][y] && player1->player_field[x+1][y+1]))
-                            {
-                                cout << "four deck" << endl;
-                                error_message;
-                            }
-                    }
-                    else if(vertical == 1)
-                    {
-                        if(0 < (player1->player_field[x-1][y] && player1->player_field[x-1][y-1] && player1->player_field[x-1][y+1] && player1->player_field[x][y-1] && player1->player_field[x][y+1]   //test1
-                            && player1->player_field[x1][y1-1] && player1->player_field[x1][y1+1] && player1->player_field[x1+1][y1] && player1->player_field[x1][y1-1] && player1->player_field[x1][y1+1] ||   
-                            player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1-1] && player1->player_field[x1-1][y1+1] && player1->player_field[x1][y1-1] && player1->player_field[x1][y1+1]       //test2
-                            && player1->player_field[x][y-1] && player1->player_field[x][y1+1] && player1->player_field[x+1][y] && player1->player_field[x][y-1] && player1->player_field[x][y+1]))
-                            {
-                                cout << "four deck" << endl;
-                                error_message;
-                            }
-                    }
+                    cout << "Check obliquely" << endl;
+                    error_message;
                 }
-                //three_deck???
-                else if(num == 3) 
+        //check horizontally and vertically
+        else if((num10 > 0 && num20 > 0 && num10 != num20) || (num10 > 0 && num11 > 0 && num10 != num11) ||
+                    (num11 > 0 && num10 > 0 && num11 != num10) || (num11 > 0 && num21 > 0 && num11 != num21) || 
+                    (num20 > 0 && num10 > 0 && num20 != num10) || (num20 > 0 && num21 > 0 && num20 != num21) ||
+                    (num21 > 0 && num20 > 0 && num21 != num20) || (num21 > 0 && num11 > 0 && num21 != num11) )
                 {
-                    if(3 == (player1->player_field[x][y-1] && player1->player_field[x][y-2] ||player1->player_field[x][y+1] && player1->player_field[x][y+2] || 
-                        player1->player_field[x-1][y] && player1->player_field[x-2][y] || player1->player_field[x+1][y] && player1->player_field[x+2][y]))
-                    {
-                        if((player1->player_field[x][y-1] && player1->player_field[x][y-2]) == 3){x1 = x; y1 = y-1; y2 = y-2; horizontal++;}         //horizontal
-                        else if((player1->player_field[x][y+1] && player1->player_field[x][y+2]) == 3){x1 = x; y1 = y+1; y1 = y+2; horizontal++;}    //horizontal
-                        else if((player1->player_field[x+1][y] && player1->player_field[x+2][y]) == 3){x1 = x+1; x2 = x+2; y1 = y; vertical++;}    //vertical
-                        else if((player1->player_field[x-1][y] && player1->player_field[x-2][y]) == 3){x1 = x-1; x2 = x-2; y1 = y; vertical++;}    //vertical
-                    }
-                    else if((player1->player_field[x][y-1] && player1->player_field[x][y-2] || player1->player_field[x][y+1] && player1->player_field[x][y+2] || 
-                    player1->player_field[x-1][y] && player1->player_field[x-2][y] || player1->player_field[x+1][y] && player1->player_field[x+2][y]) != 3)
-                        {
-                            cout << "four deck" << endl;
-                            error_message; 
-                        }
-                    //check for the nearest ships??
-                    if(horizontal == 1)
-                    {
-                        if(0 < (player1->player_field[x-1][y] && player1->player_field[x-1][y+1] && player1->player_field[x-1][y-1] && player1->player_field[x+1][y] 
-                            && player1->player_field[x1-1][y] && player1->player_field[x1+1][y] && player1->player_field[x2+1][y] && player1->player_field[x2+1][y+1] && player1->player_field[x2+1][y-1] 
-                            && player1->player_field[x2-1][y] && player1->player_field[x2+1][y]))
-                            {
-                                cout << "four deck" << endl;
-                                error_message;
-                            }
-                    }
-                    else if(vertical == 1)
-                    {
-                        if(0 < (player1->player_field[x][y-1] && player1->player_field[x][y-2] && player1->player_field[x-1][y] && player1->player_field[x-2][y] && player1->player_field[x-1][y-1] && player1->player_field[x-2][y-2] //test1
-                            && player1->player_field[x+1][y] && player1->player_field[x+2][y] && player1->player_field[x+1][y+1] &&  player1->player_field[x+2][y+2]   
-                            && player1->player_field[x1][y1-1] && player1->player_field[x1][y1-2] && player1->player_field[x1-1][y1] && player1->player_field[x1-2][y1]  && player1->player_field[x1-1][y1-1] && player1->player_field[x1-2][y1-2] 
-                            && player1->player_field[x1+1][y1] && player1->player_field[x1+2][y1] && player1->player_field[x1+1][y1+1] && player1->player_field[x1+2][y1+2] ||   
-                            player1->player_field[x1][y1-1] && player1->player_field[x1][y1-2] && player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1] && player1->player_field[x1-1][y1-1] && player1->player_field[x1-2][y1-2] //test2
-                            && player1->player_field[x1+1][y1] && player1->player_field[x1+2][y1] && player1->player_field[x1+1][y1+1] && player1->player_field[x1+2][y1+2]        
-                            && player1->player_field[x][y-1] && player1->player_field[x1][y1-2] && player1->player_field[x-1][y1] && player1->player_field[x1-2][y1] && player1->player_field[x-1][y-1] && player1->player_field[x1-2][y1-2] 
-                            && player1->player_field[x+1][y] && player1->player_field[x1+2][y1] && player1->player_field[x+1][y+1] && player1->player_field[x1+2][y1+2] ))
-                            {
-                                cout << "four deck" << endl;
-                                error_message;
-                            }
-                    }
+                    cout << "Check horizontally and vertically" << endl;
+                    error_message;
                 }
-                //four_deck
-                
-            }
-        }
+        if ((x1 && y1) == 9) return 1;
+        else if(y1 < 9){y++; y1++;}
+        else if(y1 == 9){x++; x1++; y = 0; y1 = 1;} 
     }
     return 1;
 }
 
-void    print_table(Player *player1, Player *player2)
+void    print_table(Player *player)
 {
     for(int x = 0; x < 10; x++)
     {
         for(int y = 0; y < 9; y++)
-            cout << "|" << player1->player_field[x][y];
+            cout << "|" << player->player_field[x][y];
         if(x <= 9) cout << "|" << endl;
     }
 }    
