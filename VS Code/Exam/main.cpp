@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <ctime>
 
 #define error_message cout <<" error in coordinat: \n"<<char(x+'a')<<":"<<char(y+'a')<<":"<<char(y1+'a')<<"\n"<<char(x1+'a')<<":"<<char(y+'a')<<":"<<char(y1+'a')<< endl; return 0;
 
@@ -31,6 +32,7 @@ struct Player
 using namespace std;
 
 void    create_table();
+int     create_random_table(Player *player);
 int     reading_table(Player *player);
 int     check_table(Player *player);
 void    print_table(Player *player);
@@ -39,12 +41,19 @@ int     main()
 {
     Player player1;
     Player player2;
+
     create_table();
     cout << "Press ENTER when fill the table in the file: \"field_war.txt\"" << endl;
     getchar();
     if(reading_table(&player1) == 0) return 0;
     if(check_table(&player1) == 0) return 0;
+
+    cout << "TABLE PLAYER 1: " << endl;
     print_table(&player1);
+
+    cout << "RANDOM TABLE PLAYER №: 2" << endl;
+    create_random_table(&player2);
+    print_table(&player2);
 
     return 0;
 }
@@ -116,8 +125,6 @@ int     check_table(Player *player)
         num20 = player->player_field[x1][y];
         num21 = player->player_field[x1][y1];
 
-        if(num21 == 3) 
-            cout << "" << endl;
         //check obliquely
         if((num10 != 0 && num21 != 0) || ( num20 != 0 && num11 != 0))
                 {
@@ -142,10 +149,170 @@ int     check_table(Player *player)
 
 void    print_table(Player *player)
 {
-    for(int x = 0; x < 10; x++)
+    for(int x = 0; x < 9; x++)
     {
         for(int y = 0; y < 9; y++)
             cout << "|" << player->player_field[x][y];
         if(x <= 9) cout << "|" << endl;
     }
-}    
+}
+
+int    create_random_table(Player *player)
+{
+    Ship ships;
+    srand(time(0));
+    int check;
+
+    for(int x = 0; x < 9; x++)
+        for(int y = 0; y < 9; y++)
+            player->player_field[x][y] = 0;
+
+
+    while(ships.all_sell > 1)
+    {
+        if(ships.four_d == 4)
+        {
+            check = 0;
+            while(check < 1)
+            {
+                int x = 0 + rand() % 5;
+                int y = 0 + rand() % 5;
+                int xy = 1 + rand() % 2;    //horizontal or vertical
+                //horizontal
+                if(xy == 0) 
+                {
+                    player->player_field[x][y] = 4;
+                    player->player_field[x][y+1] = 4;
+                    player->player_field[x][y+2] = 4;
+                    player->player_field[x][y+3] = 4;
+                }
+                //vetrical
+                else
+                {
+                    player->player_field[x][y] = 4;
+                    player->player_field[x+1][y] = 4;
+                    player->player_field[x+2][y] = 4;
+                    player->player_field[x+3][y] = 4;
+                }
+                ships.four_d -= 4;
+                check++;
+            }
+            ships.all_sell -= 4;
+        }
+        else if(ships.three_d == 6)
+        {
+            check = 0;
+            while(check < 2)
+            {
+                int x = 0 + rand() % 6;
+                int y = 0 + rand() % 6;
+                int xy = 1 + rand() % 2;    //horizontal or vertical
+                //horizontal
+                if(xy == 1) 
+                {
+                    if(player->player_field[x-1][y-1] == 0 && player->player_field[x-1][y] == 0 && player->player_field[x-1][y+1] == 0 && player->player_field[x-1][y+2] == 0 && player->player_field[x-1][y+3] == 0 && 
+                        player->player_field[x][y-1] == 0 && player->player_field[x][y] == 0 && player->player_field[x][y+1] == 0 && player->player_field[x][y+2] == 0 && player->player_field[x][y+3] == 0 &&
+                        player->player_field[x+1][y-1] == 0 && player->player_field[x+1][y] == 0 && player->player_field[x+1][y+1] == 0 && player->player_field[x+1][y+2] == 0 && player->player_field[x+1][y+3] == 0)
+                        {
+                            player->player_field[x][y] = 3;
+                            player->player_field[x][y+1] = 3;
+                            player->player_field[x][y+2] = 3;
+                            ships.three_d -= 3;
+                            check++;
+                            ships.all_sell -= 3;
+                        }
+                }
+                //vetrical
+                else
+                {
+                    if(player->player_field[x-1][y-1] == 0 && player->player_field[x-1][y] == 0 && player->player_field[x-1][y+1] == 0 && 
+                        player->player_field[x][y-1] == 0 && player->player_field[x][y+1] == 0 && player->player_field[x+1][y-1] == 0 && player->player_field[x+1][y+1] == 0 && player->player_field[x+2][y-1] == 0 && 
+                        player->player_field[x+2][y+1] == 0 && player->player_field[x+3][y-1] == 0 && player->player_field[x+3][y] == 0 && player->player_field[x+3][y+1] == 0)
+                        {
+                            player->player_field[x][y] = 3;
+                            player->player_field[x+1][y] = 3;
+                            player->player_field[x+2][y] = 3;
+                            ships.three_d -= 3;
+                            check++;
+                            ships.all_sell -= 3;
+                        }
+                }
+            }
+        }
+        else if(ships.two_d == 6)
+        {
+            check = 0;
+            while(check < 3)
+            {
+                int x = 0 + rand() % 7;
+                int y = 0 + rand() % 7;
+                int xy = 1 + rand() % 2;    //horizontal or vertical
+                //horizontal
+                if(xy == 1) 
+                {
+                    if(player->player_field[x-1][y-1] == 0 & player->player_field[x-1][y] == 0 & player->player_field[x-1][y+1] == 0 & player->player_field[x-1][y+2] == 0 & 
+                        player->player_field[x][y-1] == 0 & player->player_field[x][y] == 0 & player->player_field[x][y+1] == 0 & player->player_field[x][y+2] == 0 &
+                        player->player_field[x+1][y-1] == 0 & player->player_field[x+1][y] == 0 & player->player_field[x+1][y+1] == 0 & player->player_field[x+1][y+2] == 0)
+                        {
+                            player->player_field[x][y] = 2;
+                            player->player_field[x][y+1] = 2;
+                            ships.two_d -= 2;
+                            check++;
+                            ships.all_sell -= 2;
+                        }
+                }
+                //vetrical
+                else
+                {
+                    if(player->player_field[x-1][y-1] == 0 && player->player_field[x-1][y] == 0 && player->player_field[x-1][y+1] == 0 && 
+                        player->player_field[x][y-1] == 0 && player->player_field[x][y] == 0 && player->player_field[x][y+1] == 0 && player->player_field[x+1][y-1] == 0 && player->player_field[x+1][y] == 0 && 
+                        player->player_field[x+1][y+1]== 0 && player->player_field[x+2][y-1] == 0 && player->player_field[x+2][y] == 0 && player->player_field[x+2][y+1] == 0)
+                        {
+                            player->player_field[x][y] = 2;
+                            player->player_field[x+1][y] = 2;
+                            ships.two_d -= 2;
+                            check++;
+                            ships.all_sell -= 2;
+                        }
+                }
+            }
+        }
+        else if(ships.single_d == 4)
+        {
+            check = 0;
+            while(check < 3)
+            {
+                int x = 0 + rand() % 8;
+                int y = 0 + rand() % 8;
+                int xy = 1 + rand() % 2;    //horizontal or vertical
+                //horizontal
+                if(xy == 1) 
+                {
+                    if(player->player_field[x-1][y-1] == 0 && player->player_field[x-1][y] == 0 && player->player_field[x-1][y+1] == 0 && 
+                        player->player_field[x][y-1] == 0 && player->player_field[x][y] == 0 && player->player_field[x][y+1] == 0 &&
+                        player->player_field[x+1][y-1] == 0 && player->player_field[x+1][y] == 0 && player->player_field[x+1][y+1] == 0)
+                        {
+                            player->player_field[x][y] = 1;
+                            ships.single_d -= 1;
+                            check++;
+                            ships.all_sell -= 1;
+                        }
+                }
+                //vetrical
+                else
+                {
+                    if(player->player_field[x-1][y-1] == 0 && player->player_field[x-1][y] == 0 && player->player_field[x-1][y+1] == 0 && 
+                        player->player_field[x][y-1] == 0 && player->player_field[x][y] == 0 && player->player_field[x][y+1] == 0 && player->player_field[x+1][y-1] == 0 && player->player_field[x+1][y] == 0 && 
+                        player->player_field[x+1][y+1] == 0 && player->player_field[x+2][y-1] == 0 && player->player_field[x+2][y] == 0 && player->player_field[x+2][y+1] == 0)
+                        {
+                            player->player_field[x][y] = 1;
+                            ships.single_d -= 1;
+                            check++;
+                            ships.all_sell -= 1;
+                        }
+                }
+            }
+        }
+    }
+    return 0;
+}
