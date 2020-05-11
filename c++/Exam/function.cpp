@@ -5,9 +5,12 @@
 /* ########################################## */
 
 #include <iostream>
+#include "header.h"
+
+#define error_message cout <<" error in coordinat: \n"<<char(x+'a')<<":"<<char(y+'a')<<":"<<char(y1+'a')<<"\n"<<char(x1+'a')<<":"<<char(y+'a')<<":"<<char(y1+'a')<< endl; return 0;
 
 using namespace std;
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void    create_table()
 {
     ofstream field_war("field_war.txt");

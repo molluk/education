@@ -6,18 +6,13 @@
 
 //ПЕЧАТЬ ТАБЛИЦЫ ВЫСТРЕЛОВ 
 
-#include <iostream>
-#include <fstream>
-#include <ctime>
-#include <cstdlib>
-#include <unistd.h> //delete this
-
-#define error_message cout <<" error in coordinat: \n"<<char(x+'a')<<":"<<char(y+'a')<<":"<<char(y1+'a')<<"\n"<<char(x1+'a')<<":"<<char(y+'a')<<":"<<char(y1+'a')<< endl; return 0;
-
 using namespace std;
+
 
 #include "header.h"
 
+struct  Ship;
+struct Player;
 
 int     main()
 {
