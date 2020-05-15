@@ -35,7 +35,7 @@ void    create_table()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void    create_enemy_print_table(Player *player)
 {
-    for(int x = 0; x < 10; x++)
+    for(int x = 0; x <= 9; x++)
     {
         for(int y = 0; y < 10; y++)
             player->enemy_field[x][y] = 0;
@@ -109,50 +109,55 @@ int     check_table(Player *player)
     return 1;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void    print_table(Player *player, int table)  //table == 0
+void    print_table(Player *player)  //my table == 0 || enemy table == 1
 {
-    if(table == 0)
-    {
+    int num;
+        cout << "YOU TABLE: " << endl;
         cout << "   a b c d e f g h i j" << endl;
         for(int x = 0; x < 10; x++)
         {
             cout << x << " ";
             for(int y = 0; y < 10; y++)
             {
-                if(player->player_field[x][y] >= 120) 
+                num = player->player_field[x][y];
+                if(num == 9) 
                     cout << "|" << "x";
-                else if(player->enemy_field[x][y] >= 42)
+                else if(num == 8)
                     cout << "|" << "*";
-                else if(player->player_field[x][y] >= 0 && player->player_field[x][y] <= 4) 
-                    cout << "|" << player->player_field[x][y];
+                else if(num >= 1 && num <= 4) 
+                    cout << "|" << num;
+                else if(num == 0)
+                    cout << "|" << num;
             }     
             if(x < 10) cout << "|" << endl;
         }
-    }
-    else if(table == 1)
-    {
+    
+        cout << "ENEMY TABLE: " << endl;
         cout << "   a b c d e f g h i j" << endl;
         for(int x = 0; x < 10; x++)
         {
             cout << x << " ";
             for(int y = 0; y < 10; y++)
             {
-                if(player->enemy_field[x][y] == 120) 
+                num = player->enemy_field[x][y];
+                if(num >= 0 && num <= 4) 
+                    cout << "|" << num;
+                else if(num == 9) 
                     cout << "|" << "x";
-                else if(player->enemy_field[x][y] == 42) 
+                else if(num == 8) 
                     cout << "|" << "*";
-                else if(player->enemy_field[x][y] >= 0) 
-                    cout << "|" << player->enemy_field[x][y];
+
             }     
-            if(x <= 9) cout << "|" << endl;
+            if(x < 10) cout << "|" << endl;
         } 
-    }
+    
+    cout << endl;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int    create_random_table(Player *player)
 {
     Ship ships;
-    srand(time(0));
+    srand(time(NULL));
     int check = 0;
 
     for(int x = 0; x < 10; x++)
@@ -306,10 +311,81 @@ int    create_random_table(Player *player)
     return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int    shoot(Player *player1, Player *player2, Ship *ship, int pb, int x1, int y1, int start)   //pb - human = 0 || bot = 1
+int     shoot(Player *atack, Player *def, Ship *ship, int bot, int x1, int y1, int start)
+{
+    int x = 0, y = 0, shooting = 0;
+    char y_sim;
+    srand(time(NULL));
+
+    if(bot == 0)        //shoot human
+    {
+        for(int i = 0; i < 50; i++) {cout << "\n";}
+        cout << "PLAYER 1" << endl;
+        print_table(atack); 
+        cout << "Specify the coordinates of the shot: \nx (0 - 9): ";
+        cin >> x;
+        cout << "y (a - j): ";
+        cin >> y_sim;
+
+        y = y_sim - 49 - 48;
+        if(def->player_field[x][y] == 0) 
+        {
+            atack->enemy_field[x][y] = 8;
+            def->player_field[x][y] = 8;
+        }
+        else if(def->player_field[x][y] > 0 && def->player_field[x][y] < 5)
+        {
+            atack->enemy_field[x][y] = 9;
+            def->player_field[x][y] = 9;
+            ship->all_sell--;
+            shoot(atack, def, ship, bot, 0, 0, 0);
+        }
+    }
+    else if(bot == 1)
+    {
+        while(shooting == 0)
+        {
+            if(start == 0)
+            {
+                x = 0 + rand() % 9;
+                y = 0 + rand() % 9;
+            }
+            else
+            {
+                if(x1 > 0 && x1 < 9){x = (x1 - 1) + rand() % (x1 + 1);}
+                else if(x1 == 9){x = x1 + rand() % (x1 - 1);}
+                else if(x1 == 0){x = x1 + rand() % (x1 + 1);}
+
+                if(y1 > 0 && y1 < 9){y = (y1 - 1) + rand() % (y1 + 1);}
+                else if(y1 == 9){y = y1 + rand() % (y1 - 1);}
+                else if(y1 == 0){y = y1 + rand() % (y1 + 1);}
+            }
+            if(start == 1 && def->player_field[x][y] == 0)
+            {
+                if((0 + rand() % 5) == 1) {shooting++;}
+                else shoot(atack, def, ship, bot, x, y, 1);
+            }
+            else if(def->player_field[x][y] > 0 && def->player_field[x][y] < 5)
+            {
+                def->player_field[x][y] = 9;
+                ship->all_sell--;
+                shoot(atack, def, ship, bot, x, y, 1);
+            }
+            else
+            {
+                def->player_field[x][y] = 8;
+                shooting++;
+            }
+        }
+    }
+    return 0;
+}
+
+/*
+int     shoot(Player *player1, Ship *ship1, Player *player2, Ship *ship2, int pb, int x1, int y1, int start)   //pb - human = 0 || bot = 1      Player *shoot, Player *def
 {
     int shooting = 0, x, y;
-    srand(time(0));
+    srand(time(NULL));
 
     if(pb == 1)  //bot
     {
@@ -322,20 +398,21 @@ int    shoot(Player *player1, Player *player2, Ship *ship, int pb, int x1, int y
             }
             else
             {
-                x = x1 + rand() % (9 - (9 + 1 - x1));
-                y = y1 + rand() % (9 - (9 + 1 - y1));
+                x = x1 + rand() % (9 - x1);
+                y = y1 + rand() % (9 - y1);
             }
-            if(start == 1 && player1->player_field[x][y] == 0){}
+            if(start == 1 && player1->player_field[x][y] == 0)
+                if((0+rand()%1) == 1) {return 0;}
             else if(player1->player_field[x][y] == 0)
             {
                 player1->player_field[x][y] = '*';
                 shooting++;
             }
-            else if(player1->player_field[x][y] >= 1 && player1->player_field[x][y] <= 4)
+            else if(player1->player_field[x][y] > 0 && player1->player_field[x][y] < 5)
             {
                 player1->player_field[x][y] = 'x';
-                ship->all_sell--;
-                shoot(player1, player2, ship, pb, 0, 0, 1);
+                ship1->all_sell--;
+                shoot(player1, ship1, player2, ship2, pb, 0, 0, 1);
             }
         }
     }
@@ -346,17 +423,18 @@ int    shoot(Player *player1, Player *player2, Ship *ship, int pb, int x1, int y
         cin >> x;
         cout << "y (a - j): ";
         cin >> y;
-        y = y - 49;  //??????????????????????????
+        y = y - 49;  //??????????????????????????????????
         if(player2->player_field[x][y] == 0) 
             player1->enemy_field[x][y] == '*';
-        else if(player2->player_field[x][y] >= 1 && player2->player_field[x][y] <= 4)
+        else if(player2->player_field[x][y] > 0 && player2->player_field[x][y] < 5)
         {
             player1->enemy_field[x][y] == player2->player_field[x][y];
             player2->player_field[x][y] == 'x';
-            ship->all_sell--;
-            shoot(player1, player2, ship, pb, 0, 0, 0);
+            ship2->all_sell--;
+            shoot(player1, ship1, player2, ship2, pb, 0, 0, 0);
         }
     }
     return 0;
 }
+*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
